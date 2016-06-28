@@ -45,7 +45,10 @@
   </xsl:template>
   <xsl:template match="p">
     <xsl:variable name="pn"><xsl:number level="any" from="tei:text"/></xsl:variable>
-    <xsl:text>\pstart</xsl:text><xsl:call-template name="createLabelFromId" />
+    <xsl:text>\pstart</xsl:text>
+    <xsl:call-template name="createLabelFromId">
+      <xsl:with-param name="labelType">start</xsl:with-param>
+    </xsl:call-template>
     <xsl:choose>
       <xsl:when test="@type = 'ratio'">
         <xsl:choose>
@@ -81,6 +84,9 @@
       </xsl:when>
     </xsl:choose>
     <xsl:apply-templates/>
+    <xsl:call-template name="createLabelFromId">
+      <xsl:with-param name="labelType">end</xsl:with-param>
+    </xsl:call-template>
     <xsl:text>\pend</xsl:text>
   </xsl:template>
   <xsl:template match="head">
@@ -102,12 +108,16 @@
   <xsl:template match="del">\del{<xsl:apply-templates/>}</xsl:template>
   <xsl:template match="add">[+ <xsl:apply-templates/>, <xsl:value-of select="@place"/>]</xsl:template>
   <xsl:template match="seg">
-    <xsl:if test="@xml:id and @type='target'">
-      <xsl:text>\edlabelS{</xsl:text><xsl:value-of select="@xml:id"/><xsl:text>}</xsl:text>
+    <xsl:if test="@type='target'">
+      <xsl:call-template name="createLabelFromId">
+        <xsl:with-param name="labelType">start</xsl:with-param>
+      </xsl:call-template>
     </xsl:if>
     <xsl:apply-templates/>
-    <xsl:if test="@xml:id and @type='target'">
-      <xsl:text>\edlabelE{</xsl:text><xsl:value-of select="@xml:id"/><xsl:text>}</xsl:text>
+    <xsl:if test="@type='target'">
+      <xsl:call-template name="createLabelFromId">
+        <xsl:with-param name="labelType">end</xsl:with-param>
+      </xsl:call-template>
     </xsl:if>
   </xsl:template>
   <xsl:template match="cit[bibl]">
@@ -286,9 +296,25 @@
   </xsl:template>
 
   <xsl:template name="createLabelFromId">
-    <xsl:param name="labelSuffix" />
-    <xsl:if test="@xml:id and @type='target'">
-      <xsl:text>\edlabel{</xsl:text><xsl:value-of select="@xml:id"/><xsl:value-of select="$labelSuffix"/><xsl:text>}</xsl:text>
+    <xsl:param name="labelType" />
+    <xsl:if test="@xml:id">
+      <xsl:choose>
+        <xsl:when test="$labelType='start'">
+          <xsl:text>\edlabelS{</xsl:text>
+          <xsl:value-of select="@xml:id"/>
+          <xsl:text>}</xsl:text>
+        </xsl:when>
+        <xsl:when test="$labelType='end'">
+          <xsl:text>\edlabelE{</xsl:text>
+          <xsl:value-of select="@xml:id"/>
+          <xsl:text>}</xsl:text>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:text>\edlabel{</xsl:text>
+          <xsl:value-of select="@xml:id"/>
+          <xsl:text>}</xsl:text>
+        </xsl:otherwise>
+     </xsl:choose>
     </xsl:if>
   </xsl:template>
 
