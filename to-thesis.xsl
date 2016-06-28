@@ -151,9 +151,9 @@
         <xsl:otherwise>0</xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
-    <xsl:text>\edtext{\textbf{</xsl:text>
+    <xsl:text>\edtext{</xsl:text>
     <xsl:apply-templates select="lem"/>
-    <xsl:text>}}{</xsl:text>
+    <xsl:text>}{</xsl:text>
     <xsl:choose>
       <xsl:when test="count(tokenize(normalize-space(./lem), ' ')) &gt; 10">
         <xsl:text>\lemma{</xsl:text>
