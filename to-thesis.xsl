@@ -102,13 +102,13 @@
   <xsl:template match="del">\del{<xsl:apply-templates/>}</xsl:template>
   <xsl:template match="add">[+ <xsl:apply-templates/>, <xsl:value-of select="@place"/>]</xsl:template>
   <xsl:template match="seg">
-    <xsl:call-template name="createLabelFromId">
-      <xsl:with-param name="labelSuffix">beg</xsl:with-param>
-    </xsl:call-template>
+    <xsl:if test="@xml:id and @type='target'">
+      <xsl:text>\edlabelS{</xsl:text><xsl:value-of select="@xml:id"/><xsl:text>}</xsl:text>
+    </xsl:if>
     <xsl:apply-templates/>
-    <xsl:call-template name="createLabelFromId">
-      <xsl:with-param name="labelSuffix">end</xsl:with-param>
-    </xsl:call-template>
+    <xsl:if test="@xml:id and @type='target'">
+      <xsl:text>\edlabelE{</xsl:text><xsl:value-of select="@xml:id"/><xsl:text>}</xsl:text>
+    </xsl:if>
   </xsl:template>
   <xsl:template match="cit[bibl]">
     <xsl:text>\edtext{\enquote{</xsl:text>
@@ -293,7 +293,7 @@
   <xsl:template name="createLabelFromId">
     <xsl:param name="labelSuffix" />
     <xsl:if test="@xml:id and @type='target'">
-      <xsl:text>\label{</xsl:text><xsl:value-of select="@xml:id"/><xsl:value-of select="$labelSuffix"/><xsl:text>}</xsl:text>
+      <xsl:text>\edlabel{</xsl:text><xsl:value-of select="@xml:id"/><xsl:value-of select="$labelSuffix"/><xsl:text>}</xsl:text>
     </xsl:if>
   </xsl:template>
 
