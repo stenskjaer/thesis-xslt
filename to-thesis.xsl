@@ -181,8 +181,8 @@
         <xsl:with-param name="precedingWord" select="subsequence($tok-before,count($tok-before))" />
       </xsl:call-template>
     </xsl:for-each>
-    <xsl:if test="note">
-      <xsl:text> (</xsl:text><xsl:value-of select="note"/><xsl:text>)</xsl:text>
+    <xsl:if test="./note">
+      <xsl:text> Note: </xsl:text><xsl:value-of select="normalize-space(note)"/>
     </xsl:if>
     <xsl:text>}}</xsl:text>
   </xsl:template>
@@ -214,69 +214,64 @@
   <xsl:template name="varianttype">
     <xsl:param name="precedingWord" />
     <xsl:choose>
-      <xsl:when test="./note">
-        <xsl:value-of select="./note"/>
-        <xsl:value-of select="translate(@wit, '#', '')"/><xsl:text> </xsl:text>
+      <xsl:when test="./del">
+        <xsl:value-of select="./del"/>
+        <xsl:text> \emph{post} </xsl:text>
+        <xsl:value-of select="$precedingWord"/>
+        <xsl:text> \emph{del.} </xsl:text>
+        <xsl:call-template name="getWitSiglum"/>
       </xsl:when>
-      <xsl:otherwise>
+      <xsl:when test="./add">
+        <xsl:value-of select="./add"/>
+        <xsl:call-template name="getLocation" />
+        <xsl:text> \emph{add.} </xsl:text>
+        <xsl:call-template name="getWitSiglum"/>
+      </xsl:when>
+      <xsl:when test="./space">
+        <xsl:text>\emph{post} </xsl:text>
+        <xsl:value-of select="$precedingWord"/>
+        <xsl:text> \emph{vac. </xsl:text>
+        <xsl:value-of select="./space/@extent" />
+        <xsl:text>}</xsl:text>
         <xsl:choose>
-          <xsl:when test="./del">
-            <xsl:value-of select="./del"/>
-            <xsl:text> \emph{post} </xsl:text>
-            <xsl:value-of select="$precedingWord"/>
-            <xsl:text> \emph{del.} </xsl:text>
-            <xsl:call-template name="getWitSiglum"/>
-          </xsl:when>
-          <xsl:when test="./add">
-            <xsl:value-of select="./add"/>
-            <xsl:call-template name="getLocation" />
-            <xsl:text> \emph{add.} </xsl:text>
-            <xsl:call-template name="getWitSiglum"/>
-          </xsl:when>
-          <xsl:when test="./space">
-            <xsl:text>\emph{post} </xsl:text>
-            <xsl:value-of select="$precedingWord"/>
-            <xsl:text> \emph{vac. </xsl:text>
-            <xsl:value-of select="./space/@extent" />
-            <xsl:text>}</xsl:text>
+          <xsl:when test="./space/@extent &lt; 2">
             <xsl:choose>
-              <xsl:when test="./space/@extent &lt; 2">
-                <xsl:choose>
-                  <xsl:when test="./space/@unit = 'chars'"> \emph{litteram} </xsl:when>
-                  <xsl:when test="./space/@unit = 'words'"> \emph{verbum} </xsl:when>
-                </xsl:choose>
-              </xsl:when>
-              <xsl:otherwise>
-                <xsl:choose>
-                  <xsl:when test="./space/@unit = 'chars'"> \emph{litteras} </xsl:when>
-                  <xsl:when test="./space/@unit = 'words'"> \emph{verba} </xsl:when>
-                </xsl:choose>
-              </xsl:otherwise>
+              <xsl:when test="./space/@unit = 'chars'"> \emph{litteram} </xsl:when>
+              <xsl:when test="./space/@unit = 'words'"> \emph{verbum} </xsl:when>
             </xsl:choose>
-            <xsl:call-template name="getWitSiglum"/>
-          </xsl:when>
-          <xsl:when test="./subst">
-            <xsl:value-of select="./subst/add"/>
-            <xsl:text> \emph{corr. ex} </xsl:text>
-            <xsl:value-of select="./subst/del"/>
-            <xsl:text> </xsl:text>
-            <xsl:call-template name="getWitSiglum"/>
-          </xsl:when>
-          <xsl:when test="./unclear/@reason = 'rasura'">
-            <xsl:text>\emph{post} </xsl:text>
-            <xsl:value-of select="$precedingWord"/>
-            <xsl:text> \emph{ras.} </xsl:text>
-            <xsl:value-of select="./unclear/@extent" />
-            <xsl:text> \emph{litteras} </xsl:text>
-            <xsl:call-template name="getWitSiglum"/>
           </xsl:when>
           <xsl:otherwise>
-            <xsl:value-of select="."/><xsl:text> </xsl:text>
-            <xsl:call-template name="getWitSiglum"/>
+            <xsl:choose>
+              <xsl:when test="./space/@unit = 'chars'"> \emph{litteras} </xsl:when>
+              <xsl:when test="./space/@unit = 'words'"> \emph{verba} </xsl:when>
+            </xsl:choose>
           </xsl:otherwise>
         </xsl:choose>
+        <xsl:call-template name="getWitSiglum"/>
+      </xsl:when>
+      <xsl:when test="./subst">
+        <xsl:value-of select="./subst/add"/>
+        <xsl:text> \emph{corr. ex} </xsl:text>
+        <xsl:value-of select="./subst/del"/>
+        <xsl:text> </xsl:text>
+        <xsl:call-template name="getWitSiglum"/>
+      </xsl:when>
+      <xsl:when test="./unclear/@reason = 'rasura'">
+        <xsl:text>\emph{post} </xsl:text>
+        <xsl:value-of select="$precedingWord"/>
+        <xsl:text> \emph{ras.} </xsl:text>
+        <xsl:value-of select="./unclear/@extent" />
+        <xsl:text> \emph{litteras} </xsl:text>
+        <xsl:call-template name="getWitSiglum"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:value-of select="."/><xsl:text> </xsl:text>
+        <xsl:call-template name="getWitSiglum"/>
       </xsl:otherwise>
     </xsl:choose>
+    <xsl:if test="./note">
+      <xsl:text> (</xsl:text><xsl:value-of select="normalize-space(./note)"/><xsl:text>)</xsl:text>
+    </xsl:if>
   </xsl:template>
 
   <xsl:template name="getLocation">
