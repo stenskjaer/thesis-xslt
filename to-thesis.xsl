@@ -326,6 +326,9 @@
 
   <xsl:template name="getWitSiglum">
     <xsl:variable name="appnumber"><xsl:number level="any" from="tei:text"/></xsl:variable>
+    <xsl:if test=".//unclear">
+      <xsl:text>\emph{ut vid.} </xsl:text>
+    </xsl:if>
     <xsl:value-of select="translate(./@wit, '#', '')"/>
     <xsl:if test=".//@hand">
       <xsl:text>\hand{</xsl:text>
