@@ -241,22 +241,8 @@
         <xsl:text>\emph{post} </xsl:text>
         <xsl:value-of select="$precedingWord"/>
         <xsl:text> \emph{vac. </xsl:text>
-        <xsl:value-of select="./space/@extent" />
+        <xsl:call-template name="getExtent" />
         <xsl:text>}</xsl:text>
-        <xsl:choose>
-          <xsl:when test="./space/@extent &lt; 2">
-            <xsl:choose>
-              <xsl:when test="./space/@unit = 'chars'"> \emph{litteram} </xsl:when>
-              <xsl:when test="./space/@unit = 'words'"> \emph{verbum} </xsl:when>
-            </xsl:choose>
-          </xsl:when>
-          <xsl:otherwise>
-            <xsl:choose>
-              <xsl:when test="./space/@unit = 'chars'"> \emph{litteras} </xsl:when>
-              <xsl:when test="./space/@unit = 'words'"> \emph{verba} </xsl:when>
-            </xsl:choose>
-          </xsl:otherwise>
-        </xsl:choose>
         <xsl:call-template name="getWitSiglum"/>
       </xsl:when>
       <xsl:when test="./subst">
@@ -269,9 +255,9 @@
       <xsl:when test="./unclear/@reason = 'rasura'">
         <xsl:text>\emph{post} </xsl:text>
         <xsl:value-of select="$precedingWord"/>
-        <xsl:text> \emph{ras.} </xsl:text>
-        <xsl:value-of select="./unclear/@extent" />
-        <xsl:text> \emph{litteras} </xsl:text>
+        <xsl:text> \emph{ras. </xsl:text>
+        <xsl:call-template name="getExtent" />
+        <xsl:text> litteras} </xsl:text>
         <xsl:call-template name="getWitSiglum"/>
       </xsl:when>
       <xsl:otherwise>
@@ -283,6 +269,26 @@
       <xsl:text> (</xsl:text><xsl:value-of select="normalize-space(./note)"/><xsl:text>)</xsl:text>
     </xsl:if>
   </xsl:template>
+
+  <xsl:template name="getExtent">
+    <xsl:value-of select="@extent" />
+    <xsl:choose>
+      <xsl:when test="@extent &lt; 2">
+        <xsl:choose>
+          <xsl:when test="@unit = 'chars'"> litteram </xsl:when>
+          <xsl:when test="@unit = 'words'"> verbum </xsl:when>
+        </xsl:choose>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:choose>
+          <xsl:when test="@unit = 'chars'"> litteras </xsl:when>
+          <xsl:when test="@unit = 'words'"> verba </xsl:when>
+        </xsl:choose>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
+
 
   <xsl:template name="getLocation">
     <xsl:choose>
