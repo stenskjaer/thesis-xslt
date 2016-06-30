@@ -242,7 +242,7 @@
         <xsl:value-of select="$precedingWord"/>
         <xsl:text> \emph{vac. </xsl:text>
         <xsl:call-template name="getExtent" />
-        <xsl:text>}</xsl:text>
+        <xsl:text>} </xsl:text>
         <xsl:call-template name="getWitSiglum"/>
       </xsl:when>
       <xsl:when test="./subst">
@@ -271,18 +271,18 @@
   </xsl:template>
 
   <xsl:template name="getExtent">
-    <xsl:value-of select="@extent" />
+    <xsl:value-of select=".//@extent" />
     <xsl:choose>
-      <xsl:when test="@extent &lt; 2">
+      <xsl:when test=".//@extent &lt; 1">
         <xsl:choose>
-          <xsl:when test="@unit = 'chars'"> litteram </xsl:when>
-          <xsl:when test="@unit = 'words'"> verbum </xsl:when>
+          <xsl:when test=".//@unit = 'chars'"> litteram</xsl:when>
+          <xsl:when test=".//@unit = 'words'"> verbum</xsl:when>
         </xsl:choose>
       </xsl:when>
       <xsl:otherwise>
         <xsl:choose>
-          <xsl:when test="@unit = 'chars'"> litteras </xsl:when>
-          <xsl:when test="@unit = 'words'"> verba </xsl:when>
+          <xsl:when test=".//@unit = 'chars'"> litteras</xsl:when>
+          <xsl:when test=".//@unit = 'words'"> verba</xsl:when>
         </xsl:choose>
       </xsl:otherwise>
     </xsl:choose>
