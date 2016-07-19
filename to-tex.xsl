@@ -170,7 +170,7 @@
 
   <!-- The apparatus template -->
   <xsl:template match="app">
-    <xsl:variable name="preceding-tokens" select="tokenize(normalize-space(string-join(preceding::text(),'')),' ')" />
+    <xsl:variable name="preceding-tokens" select="tokenize(normalize-space(substring(string-join(preceding::text(), ''), string-length(string-join(preceding::text(), '')) - 100)), ' ')" />
     <xsl:variable name="lemmaContent">
       <xsl:choose>
         <xsl:when test="./lem and not(./lem = '')">1</xsl:when>
