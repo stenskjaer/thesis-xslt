@@ -121,16 +121,32 @@
     </xsl:if>
   </xsl:template>
   <xsl:template match="cit[bibl]">
-    <xsl:text>\edtext{\enquote{</xsl:text>
-    <xsl:apply-templates select="quote"/>
-    <xsl:text>}}{</xsl:text>
-    <xsl:if test="count(tokenize(normalize-space(./quote), ' ')) &gt; 10">
-      <xsl:text>\lemma{</xsl:text>
-      <xsl:value-of select="tokenize(normalize-space(./quote), ' ')[1]"/>
-      <xsl:text> \dots\ </xsl:text>
-      <xsl:value-of select="tokenize(normalize-space(./quote), ' ')[last()]"/>
-      <xsl:text>}</xsl:text>
-    </xsl:if>
+    <xsl:choose>
+      <xsl:when test="./quote">
+        <xsl:text>\edtext{\enquote{</xsl:text>
+        <xsl:apply-templates select="quote"/>
+        <xsl:text>}}{</xsl:text>
+        <xsl:if test="count(tokenize(normalize-space(ref), ' ')) &gt; 4">
+          <xsl:text>\lemma{</xsl:text>
+          <xsl:value-of select="tokenize(normalize-space(ref), ' ')[1]"/>
+          <xsl:text> \dots{} </xsl:text>
+          <xsl:value-of select="tokenize(normalize-space(ref), ' ')[last()]"/>
+          <xsl:text>}</xsl:text>
+        </xsl:if>
+      </xsl:when>
+      <xsl:when test="./ref">
+        <xsl:text>\edtext{</xsl:text>
+        <xsl:apply-templates select="ref"/>
+        <xsl:text>}{</xsl:text>
+        <xsl:if test="count(tokenize(normalize-space(ref), ' ')) &gt; 4">
+          <xsl:text>\lemma{</xsl:text>
+          <xsl:value-of select="tokenize(normalize-space(ref), ' ')[1]"/>
+          <xsl:text> \dots{} </xsl:text>
+          <xsl:value-of select="tokenize(normalize-space(ref), ' ')[last()]"/>
+          <xsl:text>}</xsl:text>
+        </xsl:if>
+      </xsl:when>
+    </xsl:choose>
     <xsl:text>\Afootnote{</xsl:text>
     <xsl:apply-templates select="bibl"/>
     <xsl:text>}}</xsl:text>
