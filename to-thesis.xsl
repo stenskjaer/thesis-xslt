@@ -170,7 +170,7 @@
 
   <!-- The apparatus template -->
   <xsl:template match="app">
-    <xsl:variable name="tok-before" select="tokenize(normalize-space(string-join(preceding::text(),'')),' ')" />
+    <xsl:variable name="preceding-tokens" select="tokenize(normalize-space(string-join(preceding::text(),'')),' ')" />
     <xsl:variable name="lemmaContent">
       <xsl:choose>
         <xsl:when test="./lem and not(./lem = '')">1</xsl:when>
@@ -204,7 +204,7 @@
     </xsl:choose>
     <xsl:for-each select="./rdg">
       <xsl:call-template name="varianttype">
-        <xsl:with-param name="precedingWord" select="subsequence($tok-before,count($tok-before))" />
+        <xsl:with-param name="precedingWord" select="$preceding-tokens[last()]" />
       </xsl:call-template>
     </xsl:for-each>
     <xsl:if test="./note">
