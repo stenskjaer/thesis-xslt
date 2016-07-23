@@ -168,6 +168,31 @@
   </xsl:template>
   <xsl:template match="ref"><xsl:apply-templates/></xsl:template>
 
+  <xsl:template name="substring-after-last">
+    <!-- Based on XSLT Cookbook p. 28-31 -->
+    <xsl:param name="input"/>
+    <xsl:param name="substr"/>
+
+    <!-- Get string that follows first occurrence -->
+    <xsl:variable name="temp" select="substring-after($input, $subst)"/>
+
+    <xsl:choose>
+      <!-- If it still contains the search string, continue recursively -->
+      <xsl:when test="$substr and contains($temp, $subst)">
+        <xsl:call-template name="substring-after-last">
+          <xsl:with-param name="input" select="$temp"/>
+          <xsl:with-param name="subst" select="$subst"/>
+        </xsl:call-template>
+      </xsl:when>
+      <!-- Else, return the temporary string, as it comes after last instance of
+           the string we were looking for -->
+      <xsl:otherwise>
+        <xsl:value-of select="$temp"/>
+      </xsl:otherwise>
+    </xsl:choose>
+
+  </xsl:template>
+
   <!-- The apparatus template -->
   <xsl:template match="app">
     <xsl:variable name="preceding-tokens" select="tokenize(normalize-space(substring(string-join(preceding::text(), ''), string-length(string-join(preceding::text(), '')) - 100)), ' ')" />
