@@ -174,14 +174,14 @@
     <xsl:param name="substr"/>
 
     <!-- Get string that follows first occurrence -->
-    <xsl:variable name="temp" select="substring-after($input, $subst)"/>
+    <xsl:variable name="temp" select="substring-after($input, $substr)"/>
 
     <xsl:choose>
       <!-- If it still contains the search string, continue recursively -->
-      <xsl:when test="$substr and contains($temp, $subst)">
+      <xsl:when test="$substr and contains($temp, $substr)">
         <xsl:call-template name="substring-after-last">
           <xsl:with-param name="input" select="$temp"/>
-          <xsl:with-param name="subst" select="$subst"/>
+          <xsl:with-param name="substr" select="$substr"/>
         </xsl:call-template>
       </xsl:when>
       <!-- Else, return the temporary string, as it comes after last instance of
