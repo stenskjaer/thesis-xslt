@@ -101,7 +101,11 @@
   <xsl:template match="app//unclear"><xsl:apply-templates/> ut vid.</xsl:template>
   <xsl:template match="q | term">\emph{<xsl:apply-templates/>}</xsl:template> <!-- Does not work in app! -->
   <xsl:template match="pb | cb"><xsl:variable name="MsI"><xsl:value-of select="translate(./@ed, '#', '')"/></xsl:variable> |\ledsidenote{<xsl:value-of select="concat($MsI, ./@n)"/>} </xsl:template>
-  <xsl:template match="lb"><xsl:text>\\</xsl:text></xsl:template>
+  <xsl:template match="lb">
+    <xsl:if test="position() &gt; 2">
+      <xsl:text>{\\}</xsl:text>
+    </xsl:if>
+  </xsl:template>
   <xsl:template match="supplied">\supplied{<xsl:apply-templates/>}</xsl:template>
   <xsl:template match="secl">\secluded{<xsl:apply-templates/>}</xsl:template>
   <xsl:template match="note">\footnoteA{<xsl:apply-templates/>}</xsl:template>
