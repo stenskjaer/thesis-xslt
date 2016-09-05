@@ -100,7 +100,45 @@
   <xsl:template match="unclear">\emph{<xsl:apply-templates/> [?]}</xsl:template>
   <xsl:template match="app//unclear"><xsl:apply-templates/> ut vid.</xsl:template>
   <xsl:template match="q | term">\emph{<xsl:apply-templates/>}</xsl:template> <!-- Does not work in app! -->
-  <xsl:template match="pb | cb"><xsl:variable name="MsI"><xsl:value-of select="translate(./@ed, '#', '')"/></xsl:variable> |\ledsidenote{<xsl:value-of select="concat($MsI, ./@n)"/>} </xsl:template>
+  <xsl:template match="pb | cb">
+    <xsl:choose>
+      <xsl:when test="self::pb">
+        <xsl:choose>
+          <xsl:when test="parent::p">
+            <xsl:text>|\ledsidenote{</xsl:text>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:text>|\marginpar{</xsl:text>
+          </xsl:otherwise>
+        </xsl:choose>
+        <xsl:value-of select="translate(./@ed, '#', '')"/>
+        <xsl:text> </xsl:text>
+        <xsl:value-of select="translate(./@n, '-', '')"/>
+        <xsl:if test="following-sibling::*[1][self::cb]">
+          <xsl:value-of select="following-sibling::cb[1]/@n"/>
+        </xsl:if>
+        <xsl:text>}</xsl:text>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:if test="not(preceding-sibling::*[1][self::pb])">
+          <xsl:choose>
+            <xsl:when test="parent::p">
+              <xsl:text>|\ledsidenote{</xsl:text>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:text>|\marginpar{</xsl:text>
+            </xsl:otherwise>
+          </xsl:choose>
+          <xsl:value-of select="translate(preceding::pb[1]/@ed, '#', '')"/>
+          <xsl:text> </xsl:text>
+          <xsl:value-of select="translate(preceding::pb[1]/@n, '-', '')"/>
+          <xsl:value-of select="./@n"/>
+          <xsl:text>}</xsl:text>
+        </xsl:if>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
   <xsl:template match="lb">
     <xsl:if test="position() &gt; 2">
       <xsl:text>{\\}</xsl:text>
