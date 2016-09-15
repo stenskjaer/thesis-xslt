@@ -19,8 +19,8 @@
   <xsl:variable name="combinedversionnumber"><xsl:value-of select="$sourceversion"/>+<xsl:value-of select="$conversionversion"/></xsl:variable>
   <!-- end versioning numbers -->
   <xsl:variable name="fs"><xsl:value-of select="/TEI/text/body/div/@xml:id"/></xsl:variable>
-  <xsl:variable name="name-list-file">../lists/prosopography.xml</xsl:variable>
-  <xsl:variable name="work-list-file">../lists/workscited.xml</xsl:variable>
+  <xsl:variable name="name-list-file">../../lists/prosopography.xml</xsl:variable>
+  <xsl:variable name="work-list-file">../../lists/workscited.xml</xsl:variable>
 
   <xsl:output method="text" indent="no"/>
   <!-- <xsl:strip-space elements="*"/> -->
