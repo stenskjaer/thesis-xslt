@@ -153,7 +153,7 @@
   <xsl:template match="secl">\secluded{<xsl:apply-templates/>}</xsl:template>
   <xsl:template match="note">\footnoteA{<xsl:apply-templates/>}</xsl:template>
   <xsl:template match="del">\del{<xsl:apply-templates/>}</xsl:template>
-  <xsl:template match="add">[+ <xsl:apply-templates/>, <xsl:value-of select="@place"/>]</xsl:template>
+  <xsl:template match="add">{[}+ <xsl:apply-templates/>, <xsl:value-of select="@place"/>{]}</xsl:template>
   <xsl:template match="seg">
     <xsl:if test="@type='target'">
       <xsl:call-template name="createLabelFromId">
