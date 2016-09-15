@@ -34,6 +34,11 @@
   <xsl:template match="/">
     \section*{<xsl:value-of select="$author"/>: <xsl:value-of select="$title"/>}
     \addcontentsline{toc}{section}{<xsl:value-of select="$title"/>}
+
+    Beware! This is a diplomatic transcription, and most likely at an early
+    draft state. No effort has been made in normalizing or improving the text.
+    It is therefore very likely that the presented text is incomprehensible,
+    faulty, and riddled with question marks.
     <xsl:apply-templates select="//body"/>
   </xsl:template>
 
