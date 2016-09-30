@@ -23,13 +23,13 @@
   <xsl:variable name="work-list-file">../../lists/workscited.xml</xsl:variable>
 
   <xsl:output method="text" indent="no"/>
-  <!-- <xsl:strip-space elements="*"/> -->
+  <xsl:strip-space elements="*"/>
   <!-- <xsl:template match="text()"> -->
-  <!--   <xsl:value-of select="normalize-space(.)"/> -->
+  <!--     <xsl:value-of select="normalize-space(.)"/> -->
   <!-- </xsl:template> -->
-  <!-- <xsl:template match="text()"> -->
-  <!--     <xsl:value-of select="replace(., '\s+', ' ')"/> -->
-  <!-- </xsl:template> -->
+  <xsl:template match="text()">
+      <xsl:value-of select="replace(., '\s+', ' ')"/>
+  </xsl:template>
 
   <xsl:template match="/">
     \section*{<xsl:value-of select="$author"/>: <xsl:value-of select="$title"/>}
@@ -41,7 +41,9 @@
 
   <xsl:template match="p">
     <xsl:variable name="pn"><xsl:number level="any" from="tei:text"/></xsl:variable>
-    <xsl:text>\pstart</xsl:text>
+    <xsl:text>
+
+    \pstart</xsl:text>
     <xsl:call-template name="createLabelFromId">
       <xsl:with-param name="labelType">start</xsl:with-param>
     </xsl:call-template>
@@ -52,23 +54,25 @@
     <xsl:call-template name="createLabelFromId">
       <xsl:with-param name="labelType">end</xsl:with-param>
     </xsl:call-template>
-    <xsl:text>\pend</xsl:text>
+    <xsl:text>
+    \pend</xsl:text>
   </xsl:template>
 
   <xsl:template match="head">
   </xsl:template>
 
   <xsl:template match="body">
-    <xsl:text>\beginnumbering</xsl:text>
+    \beginnumbering
     <xsl:apply-templates/>
-    <xsl:text>\endnumbering</xsl:text>
+    \endnumbering
   </xsl:template>
 
   <xsl:template name="parentDivType">
     <xsl:variable name="typeValue" select="parent::div[1]/@type"/>
     <xsl:variable name="parentDivNumber" select="parent::div[1]/@n"/>
     <xsl:variable name="typeClassNumber"/>
-    <xsl:text>\no{</xsl:text>
+    <xsl:text>
+    \no{</xsl:text>
     <xsl:choose>
       <xsl:when test="$typeValue = 'rationes-principales'">
         <xsl:text>1</xsl:text>
