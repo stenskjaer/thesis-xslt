@@ -93,6 +93,7 @@
   <xsl:template match="unclear">\emph{<xsl:apply-templates/> [?]}</xsl:template>
   <xsl:template match="app//unclear"><xsl:apply-templates/> ut vid.</xsl:template>
   <xsl:template match="q | term">\emph{<xsl:apply-templates/>}</xsl:template> <!-- Does not work in app! -->
+
   <xsl:template match="pb | cb">
     <xsl:choose>
       <xsl:when test="self::pb">
@@ -131,11 +132,11 @@
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
+
   <xsl:template match="supplied">\supplied{<xsl:apply-templates/>}</xsl:template>
   <xsl:template match="secl">\secluded{<xsl:apply-templates/>}</xsl:template>
   <xsl:template match="note">\footnoteA{<xsl:apply-templates/>}</xsl:template>
-  <xsl:template match="del">\del{<xsl:apply-templates/>}</xsl:template>
-  <xsl:template match="add">[+ <xsl:apply-templates/>, <xsl:value-of select="@place"/>]</xsl:template>
+
   <xsl:template match="seg">
     <xsl:if test="@type='target'">
       <xsl:call-template name="createLabelFromId">
@@ -149,6 +150,7 @@
       </xsl:call-template>
     </xsl:if>
   </xsl:template>
+
   <xsl:template match="cit[bibl]">
     <xsl:choose>
       <xsl:when test="./quote">
