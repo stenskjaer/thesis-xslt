@@ -33,7 +33,7 @@
 
   <xsl:template match="/">
     \section*{<xsl:value-of select="$author"/>: <xsl:value-of select="$title"/>}
-    \addcontentsline{toc}{section}{<xsl:value-of select="$title"/>}
+    \addcontentsline{toc}{section}{<xsl:value-of select="$author"/>: <xsl:value-of select="$title"/>}
     <xsl:apply-templates select="//body"/>
   </xsl:template>
 
