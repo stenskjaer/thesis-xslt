@@ -37,64 +37,57 @@
     <xsl:apply-templates select="//body"/>
   </xsl:template>
 
-  <xsl:template match="div//head">\section*{<xsl:apply-templates/>}</xsl:template>
-  <xsl:template match="div//div">
-    \bigskip
-    <xsl:apply-templates/>
+  <xsl:template match="head">\section*{<xsl:apply-templates/>}</xsl:template>
 
-  </xsl:template>
   <xsl:template match="p">
     <xsl:variable name="pn"><xsl:number level="any" from="tei:text"/></xsl:variable>
     <xsl:text>\pstart</xsl:text>
     <xsl:call-template name="createLabelFromId">
       <xsl:with-param name="labelType">start</xsl:with-param>
     </xsl:call-template>
-    <xsl:choose>
-      <xsl:when test="@type = 'ratio'">
-        <xsl:choose>
-          <xsl:when test="not(@n)">
-            <xsl:text>\no{1} </xsl:text>
-          </xsl:when>
-          <xsl:otherwise>\no{1.<xsl:value-of select="@n"/>} </xsl:otherwise>
-        </xsl:choose>
-      </xsl:when>
-      <xsl:when test="@type = 'oppositum'">
-        <xsl:choose>
-          <xsl:when test="not(@n)">
-            <xsl:text>\no{2} </xsl:text>
-          </xsl:when>
-          <xsl:otherwise>\no{2.<xsl:value-of select="@n"/>} </xsl:otherwise>
-        </xsl:choose>
-      </xsl:when>
-      <xsl:when test="@type = 'determinatio'">
-        <xsl:choose>
-          <xsl:when test="not(@n)">
-            <xsl:text>\no{3} </xsl:text>
-          </xsl:when>
-          <xsl:otherwise>\no{3.<xsl:value-of select="@n"/>} </xsl:otherwise>
-        </xsl:choose>
-      </xsl:when>
-      <xsl:when test="@type = 'ad_rationes'">
-        <xsl:choose>
-          <xsl:when test="not(@n)">
-            <xsl:text>\no{Ad 1} </xsl:text>
-          </xsl:when>
-          <xsl:otherwise>\no{Ad 1.<xsl:value-of select="@n"/>} </xsl:otherwise>
-        </xsl:choose>            
-      </xsl:when>
-    </xsl:choose>
+    <xsl:if test="not(preceding-sibling::p)">
+      <xsl:call-template name="parentDivType"/>
+    </xsl:if>
     <xsl:apply-templates/>
     <xsl:call-template name="createLabelFromId">
       <xsl:with-param name="labelType">end</xsl:with-param>
     </xsl:call-template>
     <xsl:text>\pend</xsl:text>
   </xsl:template>
+
   <xsl:template match="head">
   </xsl:template>
-  <xsl:template match="div">
-    \beginnumbering
+
+  <xsl:template match="body">
+    <xsl:text>\beginnumbering</xsl:text>
     <xsl:apply-templates/>
-    \endnumbering
+    <xsl:text>\endnumbering</xsl:text>
+  </xsl:template>
+
+  <xsl:template name="parentDivType">
+    <xsl:variable name="typeValue" select="parent::div[1]/@type"/>
+    <xsl:variable name="parentDivNumber" select="parent::div[1]/@n"/>
+    <xsl:variable name="typeClassNumber"/>
+    <xsl:text>\no{</xsl:text>
+    <xsl:choose>
+      <xsl:when test="$typeValue = 'rationes-principales'">
+        <xsl:text>1</xsl:text>
+      </xsl:when>
+      <xsl:when test="$typeValue = 'opposita'">
+        <xsl:text>2</xsl:text>
+      </xsl:when>
+      <xsl:when test="$typeValue = 'determinatio'">
+        <xsl:text>3</xsl:text>
+      </xsl:when>
+      <xsl:when test="$typeValue = 'ad-rationes'">
+        <xsl:text>4</xsl:text>
+      </xsl:when>
+    </xsl:choose>
+    <xsl:if test="$parentDivNumber">
+      <xsl:text>.</xsl:text>
+      <xsl:value-of select="$parentDivNumber"/>
+    </xsl:if>
+    <xsl:text>}</xsl:text>
   </xsl:template>
 
   <xsl:template match="unclear">\emph{<xsl:apply-templates/> [?]}</xsl:template>
@@ -282,10 +275,28 @@
     <xsl:text>}</xsl:text><xsl:text>\index[persons]{</xsl:text><xsl:value-of select="document($name-list-file)//tei:person[@xml:id=$nameid]/tei:persName[1]"/><xsl:text>}</xsl:text>
   </xsl:template>
   <xsl:template match="title">
-    <xsl:variable name="workid" select="substring-after(./@ref, '#')"/>
     <xsl:text>\worktitle{</xsl:text>
     <xsl:apply-templates/>
-    <xsl:text>}</xsl:text><xsl:text>\index[works]{</xsl:text><xsl:value-of select="document($work-list-file)//tei:bibl[@xml:id=$workid]/tei:title[1]"/><xsl:text>}</xsl:text>
+    <xsl:text>}</xsl:text>
+    <xsl:choose>
+      <xsl:when test="./@ref">
+        <xsl:variable name="workid" select="substring-after(./@ref, '#')"/>
+        <xsl:variable name="canonical-title" select="document($work-list-file)//tei:bibl[@xml:id=$workid]/tei:title[1]"/>
+        <xsl:text>\index[works]{</xsl:text>
+        <xsl:choose>
+          <xsl:when test="$canonical-title">
+            <xsl:value-of select="$canonical-title"/>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:message>No work with the id <xsl:value-of select="$workid"/> in workslist file.</xsl:message>
+          </xsl:otherwise>
+        </xsl:choose>
+        <xsl:text>}</xsl:text>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:message terminate="no">No reference given for title/<xsl:value-of select="."/>.</xsl:message>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
   <xsl:template match="mentioned">
     <xsl:text>\enquote*{</xsl:text>
