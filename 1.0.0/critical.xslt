@@ -155,53 +155,45 @@
     </xsl:if>
   </xsl:template>
 
-  <xsl:template match="cit[bibl]">
-    <xsl:choose>
-      <xsl:when test="./quote">
-        <xsl:text>\edtext{\enquote{</xsl:text>
-        <xsl:apply-templates select="quote"/>
-        <xsl:text>}}{</xsl:text>
-        <xsl:if test="count(tokenize(normalize-space(ref), ' ')) &gt; 4">
-          <xsl:text>\lemma{</xsl:text>
-          <xsl:value-of select="tokenize(normalize-space(ref), ' ')[1]"/>
-          <xsl:text> \dots{} </xsl:text>
-          <xsl:value-of select="tokenize(normalize-space(ref), ' ')[last()]"/>
-          <xsl:text>}</xsl:text>
-        </xsl:if>
-      </xsl:when>
-      <xsl:when test="./ref">
-        <xsl:text>\edtext{</xsl:text>
-        <xsl:apply-templates select="ref"/>
-        <xsl:text>}{</xsl:text>
-        <xsl:if test="count(tokenize(normalize-space(ref), ' ')) &gt; 4">
-          <xsl:text>\lemma{</xsl:text>
-          <xsl:value-of select="tokenize(normalize-space(ref), ' ')[1]"/>
-          <xsl:text> \dots{} </xsl:text>
-          <xsl:value-of select="tokenize(normalize-space(ref), ' ')[last()]"/>
-          <xsl:text>}</xsl:text>
-        </xsl:if>
-      </xsl:when>
-    </xsl:choose>
-    <xsl:text>\Afootnote{</xsl:text>
-    <xsl:apply-templates select="bibl"/>
-    <xsl:text>}}</xsl:text>
-  </xsl:template>
-  <xsl:template match="ref[bibl]">
+  <xsl:template match="cit">
     <xsl:text>\edtext{</xsl:text>
-    <xsl:apply-templates select="seg"/>
-    <xsl:text>}{</xsl:text>
-    <xsl:if test="count(tokenize(normalize-space(./seg), ' ')) &gt; 10">
+    <xsl:apply-templates select="ref"/>
+    <xsl:apply-templates select="quote"/>
+    <xsl:text>}</xsl:text>
+    <xsl:text>{</xsl:text>
+     <xsl:if test="count(tokenize(normalize-space(quote), ' ')) &gt; 4">
       <xsl:text>\lemma{</xsl:text>
-      <xsl:value-of select="tokenize(normalize-space(./seg), ' ')[1]"/>
-      <xsl:text> \dots\ </xsl:text>
-      <xsl:value-of select="tokenize(normalize-space(./seg), ' ')[last()]"/>
+      <xsl:value-of select="tokenize(normalize-space(quote), ' ')[1]"/>
+      <xsl:text> \dots{} </xsl:text>
+      <xsl:value-of select="tokenize(normalize-space(quote), ' ')[last()]"/>
       <xsl:text>}</xsl:text>
     </xsl:if>
-    <xsl:text>\Afootnote{</xsl:text>
     <xsl:apply-templates select="bibl"/>
-    <xsl:text>}}</xsl:text>
+    <xsl:text>}</xsl:text>
   </xsl:template>
-  <xsl:template match="ref"><xsl:apply-templates/></xsl:template>
+
+  <xsl:template match="bibl">
+    <xsl:text>\Afootnote{</xsl:text>
+    <xsl:apply-templates/>
+    <xsl:text>}</xsl:text>
+  </xsl:template>
+
+  <xsl:template match="ref">
+    <xsl:apply-templates/>
+  </xsl:template>
+
+  <xsl:template match="quote">
+    <xsl:choose>
+      <xsl:when test="@type='paraphrase'">
+        <xsl:apply-templates />
+      </xsl:when>
+      <xsl:when test="@type='direct' or not(@type)">
+        <xsl:text>\enquote{</xsl:text>
+        <xsl:apply-templates />
+        <xsl:text>}</xsl:text>
+      </xsl:when>
+    </xsl:choose>
+  </xsl:template>
 
   <xsl:template name="substring-after-last">
     <!-- Based on XSLT Cookbook p. 28-31 -->
