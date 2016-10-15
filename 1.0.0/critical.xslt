@@ -148,8 +148,7 @@
     <xsl:text>}</xsl:text>
   </xsl:template>
 
-  <xsl:template match="unclear">\emph{<xsl:apply-templates/> [?]}</xsl:template>
-  <xsl:template match="q | term">\emph{<xsl:apply-templates/>}</xsl:template> <!-- Does not work in app! -->
+  <xsl:template match="unclear"> \emph{<xsl:apply-templates/> [?]}</xsl:template>
   <xsl:template match="rdg//unclear"><xsl:apply-templates/> ut vid.</xsl:template>
 
   <xsl:template match="pb | cb">
