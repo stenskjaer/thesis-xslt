@@ -409,6 +409,46 @@
     </xsl:if>
   </xsl:template>
 
+
+  <xsl:template match="name">
+    <xsl:variable name="nameid" select="substring-after(./@ref, '#')"/>
+    <xsl:text> \name{</xsl:text>
+    <xsl:apply-templates/>
+    <xsl:text>}</xsl:text><xsl:text>\index[persons]{</xsl:text><xsl:value-of select="document($name-list-file)//tei:person[@xml:id=$nameid]/tei:persName[1]"/><xsl:text>}</xsl:text>
+  </xsl:template>
+
+  <xsl:template match="title">
+    <xsl:text>\worktitle{</xsl:text>
+    <xsl:apply-templates/>
+    <xsl:text>}</xsl:text>
+    <xsl:choose>
+      <xsl:when test="./@ref">
+        <xsl:variable name="workid" select="substring-after(./@ref, '#')"/>
+        <xsl:variable name="canonical-title" select="document($work-list-file)//tei:bibl[@xml:id=$workid]/tei:title[1]"/>
+        <xsl:text>\index[works]{</xsl:text>
+        <xsl:choose>
+          <xsl:when test="$canonical-title">
+            <xsl:value-of select="$canonical-title"/>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:message>No work with the id <xsl:value-of select="$workid"/> in workslist file (<xsl:value-of select="$work-list-file"/>)</xsl:message>
+          </xsl:otherwise>
+        </xsl:choose>
+        <xsl:text>}</xsl:text>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:message terminate="no">No reference given for title/<xsl:value-of select="."/>.</xsl:message>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
+  <xsl:template match="mentioned">
+    <xsl:text>\enquote*{</xsl:text>
+    <xsl:apply-templates/>
+    <xsl:text>}</xsl:text>
+  </xsl:template>
+
+
   <xsl:template name="getExtent">
     <xsl:value-of select=".//@extent" />
     <xsl:choose>
