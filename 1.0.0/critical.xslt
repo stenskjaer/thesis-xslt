@@ -60,9 +60,11 @@
   </xsl:template>
 
   <xsl:template match="body">
+    \begin{latin}
     \beginnumbering
     <xsl:apply-templates/>
     \endnumbering
+    \end{latin}
   </xsl:template>
 
   <xsl:template match="front/div">
