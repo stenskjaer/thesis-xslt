@@ -47,9 +47,7 @@
     <xsl:call-template name="createLabelFromId">
       <xsl:with-param name="labelType">start</xsl:with-param>
     </xsl:call-template>
-    <xsl:if test="not(preceding-sibling::p)">
-      <xsl:call-template name="parentDivType"/>
-    </xsl:if>
+    <xsl:call-template name="createStructureNumber"/>
     <xsl:apply-templates/>
     <xsl:call-template name="createLabelFromId">
       <xsl:with-param name="labelType">end</xsl:with-param>
@@ -67,29 +65,83 @@
     \endnumbering
   </xsl:template>
 
-  <xsl:template name="parentDivType">
-    <xsl:variable name="typeValue" select="parent::div[1]/@type"/>
-    <xsl:variable name="parentDivNumber" select="parent::div[1]/@n"/>
-    <xsl:variable name="typeClassNumber"/>
+  <xsl:template match="front/div">
+    <xsl:apply-templates/>
+  </xsl:template>
+
+  <xsl:template name="createStructureNumber">
+    <xsl:param name="structure-types">
+      <n>rationes-principales</n>
+      <n>opposita</n>
+      <n>determinatio</n>
+      <n>ad-rationes</n>
+    </xsl:param>
+    <!--
+        1. if p.type
+        type-name = p@type.value
+        1.1 if p.n (= subsection)
+        section-number = p@n.value
+        2. elif parent::div@type
+        type-name = parent::div@type.value
+        2.1 if parent::div@n
+        section-number = parent::div@n.value
+    -->
+    <xsl:choose>
+      <xsl:when test="@type = $structure-types/*">
+        <xsl:choose>
+          <xsl:when test="@n">
+            <xsl:call-template name="printStructureNumber">
+              <xsl:with-param name="type-name" select="@type"/>
+              <xsl:with-param name="section-number" select="@n"/>
+            </xsl:call-template>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:call-template name="printStructureNumber">
+              <xsl:with-param name="type-name" select="@type"/>
+            </xsl:call-template>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:when>
+      <xsl:when test="parent::div[1]/@type = $structure-types/*">
+        <xsl:choose>
+          <xsl:when test="parent::div[1]/@n">
+            <xsl:call-template name="printStructureNumber">
+              <xsl:with-param name="type-name" select="parent::div[1]/@type"/>
+              <xsl:with-param name="section-number" select="parent::div[1]/@n"/>
+            </xsl:call-template>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:call-template name="printStructureNumber">
+              <xsl:with-param name="type-name" select="parent::div[1]/@type"/>
+            </xsl:call-template>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:when>
+    </xsl:choose>
+  </xsl:template>
+
+  <xsl:template name="printStructureNumber">
+    <xsl:param name="type-name"/>
+    <xsl:param name="section-number"/>
     <xsl:text>
     \no{</xsl:text>
     <xsl:choose>
-      <xsl:when test="$typeValue = 'rationes-principales'">
+      <xsl:when test="$type-name = 'rationes-principales'">
         <xsl:text>1</xsl:text>
       </xsl:when>
-      <xsl:when test="$typeValue = 'opposita'">
+      <xsl:when test="$type-name = 'opposita'">
         <xsl:text>2</xsl:text>
       </xsl:when>
-      <xsl:when test="$typeValue = 'determinatio'">
+      <xsl:when test="$type-name = 'determinatio'">
         <xsl:text>3</xsl:text>
       </xsl:when>
-      <xsl:when test="$typeValue = 'ad-rationes'">
+      <xsl:when test="$type-name = 'ad-rationes'">
         <xsl:text>4</xsl:text>
       </xsl:when>
     </xsl:choose>
-    <xsl:if test="$parentDivNumber">
+    <xsl:if test="$section-number">
       <xsl:text>.</xsl:text>
-      <xsl:value-of select="$parentDivNumber"/>
+      <xsl:value-of select="$section-number"/>
     </xsl:if>
     <xsl:text>}</xsl:text>
   </xsl:template>
