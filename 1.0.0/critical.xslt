@@ -663,7 +663,7 @@
             <xsl:apply-templates select="."/>
           </xsl:otherwise>
         </xsl:choose>
-        <xsl:text> \emph{scr.}</xsl:text>
+        <xsl:text> \emph{conj.}</xsl:text>
         <xsl:if test="@source">
           <xsl:text> </xsl:text>
           <xsl:value-of select="@source"/>
