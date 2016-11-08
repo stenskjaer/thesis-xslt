@@ -284,7 +284,7 @@
     <xsl:variable name="nameid" select="substring-after(./@ref, '#')"/>
     <xsl:text> \name{</xsl:text>
     <xsl:apply-templates/>
-    <xsl:text>}</xsl:text><xsl:text>\index[persons]{</xsl:text><xsl:value-of select="document($name-list-file)//tei:person[@xml:id=$nameid]/tei:persName[1]"/><xsl:text>}</xsl:text>
+    <xsl:text>}</xsl:text><xsl:text>\index[persons]{</xsl:text><xsl:value-of select="document($name-list-file)//tei:person[@xml:id=$nameid]/tei:persName[1]"/><xsl:text>} </xsl:text>
   </xsl:template>
 
   <xsl:template match="title">
