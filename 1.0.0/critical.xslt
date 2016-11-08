@@ -247,6 +247,7 @@
       <xsl:text>}</xsl:text>
     </xsl:if>
     <xsl:apply-templates select="bibl"/>
+    <xsl:apply-templates select="note"/>
     <xsl:text>}</xsl:text>
   </xsl:template>
 
@@ -258,6 +259,12 @@
 
   <xsl:template match="ref">
     <xsl:apply-templates/>
+  </xsl:template>
+
+  <xsl:template match="cit/note">
+    <xsl:text>\Afootnote{Note: </xsl:text>
+    <xsl:apply-templates/>
+    <xsl:text>}</xsl:text>
   </xsl:template>
 
   <xsl:template match="quote">
