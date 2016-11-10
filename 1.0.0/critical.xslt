@@ -22,6 +22,7 @@
   <xsl:variable name="name-list-file">../../lists/prosopography.xml</xsl:variable>
   <xsl:variable name="work-list-file">../../lists/workscited.xml</xsl:variable>
   <xsl:variable name="app_entry_separator">;</xsl:variable>
+  <xsl:variable name="starts_on" select="/TEI/text/front/div/pb"/>
 
   <xsl:output method="text" indent="no"/>
   <xsl:strip-space elements="*"/>
@@ -48,6 +49,12 @@
     <xsl:call-template name="createLabelFromId">
       <xsl:with-param name="labelType">start</xsl:with-param>
     </xsl:call-template>
+    <xsl:if test="$pn='1'">
+      <xsl:call-template name="createPageColumnBreak">
+        <xsl:with-param name="withIndicator" select="false()"/>
+        <xsl:with-param name="context" select="$starts_on"/>
+      </xsl:call-template>
+    </xsl:if>
     <xsl:call-template name="createStructureNumber"/>
     <xsl:apply-templates/>
     <xsl:call-template name="createLabelFromId">
@@ -179,43 +186,36 @@
   <xsl:template match="note">\footnoteA{<xsl:apply-templates/>}</xsl:template>
   <xsl:template match="unclear">\emph{<xsl:apply-templates/> [?]}</xsl:template>
 
-  <xsl:template match="pb | cb">
-    <xsl:choose>
-      <xsl:when test="self::pb">
-        <xsl:choose>
-          <xsl:when test="parent::p">
-            <xsl:text>|\ledsidenote{</xsl:text>
-          </xsl:when>
-          <xsl:otherwise>
-            <xsl:text>|\marginpar{</xsl:text>
-          </xsl:otherwise>
-        </xsl:choose>
-        <xsl:value-of select="translate(./@ed, '#', '')"/>
-        <xsl:text> </xsl:text>
-        <xsl:value-of select="translate(./@n, '-', '')"/>
-        <xsl:if test="following-sibling::*[1][self::cb]">
-          <xsl:value-of select="following-sibling::cb[1]/@n"/>
-        </xsl:if>
-        <xsl:text>}</xsl:text>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:if test="not(preceding-sibling::*[1][self::pb])">
-          <xsl:choose>
-            <xsl:when test="parent::p">
-              <xsl:text>|\ledsidenote{</xsl:text>
-            </xsl:when>
-            <xsl:otherwise>
-              <xsl:text>|\marginpar{</xsl:text>
-            </xsl:otherwise>
-          </xsl:choose>
-          <xsl:value-of select="translate(preceding::pb[1]/@ed, '#', '')"/>
+  <xsl:template match="pb | cb" name="createPageColumnBreak">
+    <xsl:param name="withIndicator" select="true()"/>
+    <xsl:param name="context" select="."/>
+    <xsl:if test="$withIndicator">
+      <xsl:text>|</xsl:text>
+    </xsl:if>
+    <xsl:for-each select="$context">
+      <xsl:choose>
+        <xsl:when test="self::pb">
+          <xsl:text>\ledsidenote{</xsl:text>
+          <xsl:value-of select="translate(./@ed, '#', '')"/>
           <xsl:text> </xsl:text>
-          <xsl:value-of select="translate(preceding::pb[1]/@n, '-', '')"/>
-          <xsl:value-of select="./@n"/>
+          <xsl:value-of select="translate(./@n, '-', '')"/>
+          <xsl:if test="following-sibling::*[1][self::cb]">
+            <xsl:value-of select="following-sibling::cb[1]/@n"/>
+          </xsl:if>
           <xsl:text>}</xsl:text>
-        </xsl:if>
-      </xsl:otherwise>
-    </xsl:choose>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:if test="not(preceding-sibling::*[1][self::pb])">
+            <xsl:text>\ledsidenote{</xsl:text>
+            <xsl:value-of select="translate(preceding::pb[1]/@ed, '#', '')"/>
+            <xsl:text> </xsl:text>
+            <xsl:value-of select="translate(preceding::pb[1]/@n, '-', '')"/>
+            <xsl:value-of select="./@n"/>
+            <xsl:text>}</xsl:text>
+          </xsl:if>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:for-each>
   </xsl:template>
 
 
